@@ -1,43 +1,45 @@
 #include "shell.h"
 
 /**
- * 
- * main -- Simple shell main function
- * @ac: count of argguments
- * @av: arguments
- * 
- * 
- * 
- * Return: 0 Always (success).
+ * main - entry point
+ * @ac: arg count
+ * @av: arg vector
+ *
+ * Return: 0 on success, 1 on error
  */
-
-int main(int ac, char **argv)
+int main(int ac, char **av)
 {
-    char *line = NULL;
-    char **command = NULL;
-    int status = 0, ind = 0;
-    (void) ac;
+	info_t info[] = { INFO_INIT };
+	int xd = 2;
 
+	asm ("mov %1, %0\n\t"
+		"add $3, %0"
+		: "=r" (xd)
+		: "r" (xd));
 
-
-    while (1)
-    {
-        line = read_command();
-        if (line == NULL)  /* reache EDF ctr + D */
-        {
-            if (isatty(STDIN_FILENO))
-                    write(STDOUT_FILENO, "\n", 1);
-            return (status);
-        }
-        ind++;
-        
-        
-        command = tokenizer(line);
-        if (!command)
-            continue;
-
-  
-
-        status = _execute(command, argv, ind); 
-    }
+	if (ac == 2)
+	{
+		xd = open(av[1], O_RDONLY);
+		if (xd == -1)
+		{
+			if (errno == EACCES)
+				exit(126);
+			if (errno == ENOENT)
+			{
+				_eputs(av[0]);
+				_eputs(": 0: Can't open ");
+				_eputs(av[1]);
+				_eputchar('\n');
+				_eputchar(BUF_FLUSH);
+				exit(127);
+			}
+			return (EXIT_FAILURE);
+		}
+		info->readfd = xd;
+	}
+	populate_env_list(info);
+	read_history(info);
+	hsh(info, av);
+	return (EXIT_SUCCESS);
 }
+

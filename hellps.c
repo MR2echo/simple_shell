@@ -1,77 +1,86 @@
 #include "shell.h"
 
-void freeArrayOfHellps(char **arr)
+/**
+ *_eputs - prints an input string
+ * @str: the string to be printed
+ *
+ * Return: Nothing
+ */
+void _eputs(char *str)
 {
-    int i;
-    if (!arr)
-        return;
+	int i = 0;
 
-    for (i = 0; arr[i]; i++)
-    {
-        free(arr[i]);
-        arr[i] = NULL;
-    }
-
-    free(arr), arr = NULL;
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
+		_eputchar(str[i]);
+		i++;
+	}
 }
 
-
-void printerror(char *name, char *cmd, int ind)
+/**
+ * _eputchar - writes the character c to stderr
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _eputchar(char c)
 {
-    char *index, mssg[] = ": not found\n";
-    index = itoa(ind); 
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-    write(STDERR_FILENO, name, _strlen(name));
-    write(STDERR_FILENO, " :", 2);
-    write(STDERR_FILENO, index,  -strlen(index));
-    write(STDERR_FILENO, " :", 2);
-    write(STDERR_FILENO, cmd,  -strlen(cmd));
-    write(STDERR_FILENO, mssg,  -strlen(mssg));
-
-    free(index);
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(2, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
 }
 
-
-
-char *itoa(int n)
+/**
+ * _putfd - writes the character c to given fd
+ * @c: The character to print
+ * @fd: The filedescriptor to write to
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _putfd(char c, int fd)
 {
-   char buffer[20];
-   int i = 0;
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-   if (n == 0)
-       buffer[i++] = '0';
-    else
-    {
-        while (n > 0)
-        {
-            buffer[i++] = (n % 10) + '0';
-            n /= 10;
-        }
-    }
-
-    buffer[i] = '\0';
-    reverse_string(buffer, i);
-
-    return (_strdup(buffer));   
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(fd, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
 }
 
-
-
-
-
-void reverse_string(char *str, int leng)
+/**
+ *_putsfd - prints an input string
+ * @str: the string to be printed
+ * @fd: the filedescriptor to write to
+ *
+ * Return: the number of chars put
+ */
+int _putsfd(char *str, int fd)
 {
-   char tmp;
-   int start = 0;
-   int end = leng -1;
+	int i = 0;
 
-
-   while (start < end)
-   {
-      tmp = str[start];
-      str[start] = str[end];
-      str[end] = tmp;
-      start++;
-      end--;
-   }   
+	if (!str)
+		return (0);
+	while (*str)
+	{
+		i += _putfd(*str++, fd);
+	}
+	return (i);
 }
+

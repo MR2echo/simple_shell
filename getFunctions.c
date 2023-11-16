@@ -1,85 +1,76 @@
 #include "shell.h"
 
-
-char *_strdup(const char *str)
-{
-    char *ptr;
-    int i, count = 0;
-
-    if (str == NULL)
-         return (NULL);
-    
-    while (str[count])
-          count++;
-     
-    ptr = malloc(sizeof(char) * (count + 1));
-    if ( ptr == NULL)
-         return (NULL);
-    for (i = 0; i <= count; i++)
-        ptr[i] = str[i];
-    return (ptr);          
-}
-
-
-
-int _strcmp(char *t1, char * t2)
-{
-   int cmp;
-
-   cmp = (int)*t1 - (int)*t2;
-   while (*t1)
-   {
-      if (*t1 != *t2)
-          break;
-      t1++;
-      t2++;
-      cmp = (int)*t1 - (int)*t2;    
-   }
-
-   return (cmp);
-}
-
-
+/**
+ * _strlen - returns the length of a string
+ * @s: the string whose length to check
+ *
+ * Return: integer length of string
+ */
 int _strlen(char *s)
 {
-    int le = 0;
+	int i = 0;
 
-    while (s[le])
-        le++;
-    return (le);    
+	if (!s)
+		return (0);
+
+	while (*s++)
+		i++;
+	return (i);
 }
 
-
-
-char *_strcat(char *dest, char *src)
+/**
+ * _strcmp - performs lexicogarphic comparison of two strangs.
+ * @t1: the first strang
+ * @t2: the second strang
+ *
+ * Return: negative if t1 < t2, positive if t1 > t2, zero if t1 == t2
+ */
+int _strcmp(char *t1, char *t2)
 {
-    char *p = dest;
-
-    while (*p)
-        p++;
-
-    while (*src)
-    {
-       *p = *src;
-       p++;
-       src++;      
-    }    
-    *p = '\0';
-    return (dest);
+	while (*t1 && *t2)
+	{
+		if (*t1 != *t2)
+			return (*t1 - *t2);
+		t1++;
+		t2++;
+	}
+	if (*t1 == *t2)
+		return (0);
+	else
+		return (*t1 < *t2 ? -1 : 1);
 }
 
-
-
-
-char *_strcpy(char *dest, char *src)
+/**
+ * starts_with - checks if needle starts with haystack
+ * @haystack: string to search
+ * @needle: the substring to find
+ *
+ * Return: address of next char of haystack or NULL
+ */
+char *starts_with(const char *haystack, const char *needle)
 {
-    int i = 0;
-
-    while (src[i])
-    {
-        dest[i] = src[i];
-        i++;
-    }
-    dest[i] = '\0';
-    return (dest);
+	while (*needle)
+		if (*needle++ != *haystack++)
+			return (NULL);
+	return ((char *)haystack);
 }
+
+/**
+ * _strcat - concatenates two strings
+ * @desti: the destination buffer
+ * @src: the source buffer
+ *
+ * Return: pointer to destination buffer
+ */
+char *_strcat(char *desti, char *src)
+{
+	char *ret = desti;
+
+	while (*desit)
+		desti++;
+	while (*src)
+		*desti++ = *src++;
+	*desti = *src;
+	return (ret);
+}
+
